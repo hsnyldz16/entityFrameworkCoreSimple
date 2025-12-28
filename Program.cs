@@ -88,7 +88,24 @@ while (devamEt)
 
         string? secim = Console.ReadLine();
 
-        // Ürün işlemleri burada gerçekleştirilecek
+        switch (secim)
+        {
+            case "1":
+                // Ürün listeleme işlemi
+                break;
+            case "2":
+                urunEkle(db);
+                break;
+            case "3":
+                // Ürün düzenleme işlemi
+                break;
+            case "4":
+                // Ürün silme işlemi
+                break;
+            case "0":
+                // Geri dönme işlemi
+                break;
+        }
     }
 
     void KategoriEkle(AppDbContext db)
@@ -230,6 +247,77 @@ while (devamEt)
         }
 
         Console.WriteLine("Devam etmek için bir tuşa basın...");
+        Console.ReadKey();
+    }
+
+    void urunEkle(AppDbContext db)
+    {
+        Console.Clear();
+        Console.WriteLine("-- YENİ ÜRÜN EKLEME --");
+
+        //Önce Kullanıcı hangi kategoriyi seçeceğini görsün
+        var kategoriler = db.Kategoriler.ToList();
+        if(kategoriler.Count == 0)
+        {
+            Console.WriteLine("Önce kategori eklemelisiniz. Devam etmek için bir tuşa basın...");
+            Console.ReadKey();
+            return;
+        }
+
+        Console.WriteLine("Mevcut Kategoriler:");
+        foreach(var k in kategoriler)
+        {
+            Console.WriteLine($"{k.Id} - {k.Ad}");
+        }
+
+        Console.WriteLine("----------------------------");
+
+        // 2. Kullanıcıdan verileri al
+        Console.Write("Kategori ID Seçiniz: ");
+        /*if (!int.TryParse(Console.ReadLine(), out int secilenKategoriId) || !kategoriler.Any(k => k.Id == secilenKategoriId))
+        {
+            Console.WriteLine("Geçersiz Kategori ID!");
+            Console.ReadKey();
+            return;
+        }*/
+
+        if(!int.TryParse(Console.ReadLine(), out int secilenKategoriId) || !kategoriler.Any(k => k.Id == secilenKategoriId)) 
+        {
+            Console.WriteLine("Geçersiz Kategori ID!");
+            Console.ReadKey();
+            return;
+        }
+
+        Console.Write("Ürün Adı: ");
+        string? ad = Console.ReadLine();
+
+        Console.Write("Fiyat: ");
+        decimal.TryParse(Console.ReadLine(), out decimal fiyat);
+
+        Console.Write("Stok Adedi: ");
+        int.TryParse(Console.ReadLine(), out int stok);
+
+        if(!string.IsNullOrEmpty(ad))
+        {
+           var yeniUrun = new Urun
+           {
+               Ad = ad,
+               Fiyat = fiyat,
+               Stok = stok,
+               KategoriId = secilenKategoriId,
+               Durum = 1
+            };
+
+            //Kaydet
+            db.Urunler.Add(yeniUrun);
+            db.SaveChanges();
+            Console.WriteLine("Ürün başarıyla eklendi. Devam etmek için bir tuşa basın...");
+
+        } else 
+        {
+            Console.WriteLine("Ürün adı boş olamaz. Devam etmek için bir tuşa basın...");
+        }
+
         Console.ReadKey();
     }
 }   
