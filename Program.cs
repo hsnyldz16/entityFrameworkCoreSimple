@@ -2,6 +2,8 @@
 using UrunlerYonetim.Data;
 using UrunlerYonetim.Models;
 
+Console.OutputEncoding = System.Text.Encoding.UTF8;
+
 //Veritabanı Nesnesi
 using var context = new AppDbContext();
 
@@ -91,10 +93,10 @@ while (devamEt)
         switch (secim)
         {
             case "1":
-                // Ürün listeleme işlemi
+                UrunListele(db);
                 break;
             case "2":
-                urunEkle(db);
+                UrunEkle(db);
                 break;
             case "3":
                 // Ürün düzenleme işlemi
@@ -250,7 +252,7 @@ while (devamEt)
         Console.ReadKey();
     }
 
-    void urunEkle(AppDbContext db)
+    void UrunEkle(AppDbContext db)
     {
         Console.Clear();
         Console.WriteLine("-- YENİ ÜRÜN EKLEME --");
@@ -318,6 +320,33 @@ while (devamEt)
             Console.WriteLine("Ürün adı boş olamaz. Devam etmek için bir tuşa basın...");
         }
 
+        Console.ReadKey();
+    }
+
+    void UrunListele(AppDbContext db)
+    {
+        Console.Clear();
+        Console.WriteLine("-- ÜRÜN LİSTESİ --");
+
+        var Urunler = db.Urunler
+                        .Include(u => u.Kategori)
+                        .ToList();
+        //Ürün var  mı?
+        if(Urunler.Count == 0)
+        {
+            Console.WriteLine("Kayıtlı ürün bulunmamaktadır.");
+        } else
+        {
+            Console.WriteLine("{0,-5} {1,-20} {2,-10:C2} {3,-8} {4,-15}", "ID", "Ürün Adı", "Fiyat", "Stok", "Kategori");
+            Console.WriteLine("--------------------------------------------------------------");
+
+            foreach (var u in Urunler)
+            { 
+                Console.WriteLine("{0,-5} {1,-20} {2,-10:C2} {3,-8:N0} {4,-15}", 
+                u.Id, u.Ad, u.Fiyat.ToString("N2") + " TL", u.Stok, u.Kategori?.Ad ?? "Yok");            }
+
+            Console.WriteLine("\nDevam etmek için bir tuşa basın...");   
+        }
         Console.ReadKey();
     }
 }   
