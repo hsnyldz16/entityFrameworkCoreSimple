@@ -99,10 +99,10 @@ while (devamEt)
                 UrunEkle(db);
                 break;
             case "3":
-                // Ürün düzenleme işlemi
+                //Urun Düzenleme
                 break;
             case "4":
-                // Ürün silme işlemi
+                UrunSil(db);
                 break;
             case "0":
                 // Geri dönme işlemi
@@ -347,6 +347,47 @@ while (devamEt)
 
             Console.WriteLine("\nDevam etmek için bir tuşa basın...");   
         }
+        Console.ReadKey();
+    }
+
+    void UrunSil(AppDbContext db)
+    {
+        Console.Clear();
+        Console.WriteLine("-- ÜRÜN SİLME --");
+        Console.Write("Silmek istediğiniz ürünün ID'sini girin: ");
+
+        if(int.TryParse(Console.ReadLine(), out int urunId))
+        {
+            var urun = db.Urunler.Include(u =>u.Kategori).FirstOrDefault(u => u.Id == urunId);
+
+            if( urun != null) 
+            {
+                //Kullanıcıya onay soralım
+                Console.WriteLine($"\nÜrün Adı: {urun.Ad}");
+                Console.WriteLine($"Kategorisi: {urun.Kategori?.Ad ?? "Yok"}");
+                Console.Write("\nBu ürünü silmek istediğinize emin misiniz? (y/n): ");
+                
+                string? onay = Console.ReadLine()?.ToLower();
+
+                if( onay == "y")
+                {
+                    urun.Durum = 3;
+                    db.SaveChanges();
+                    Console.WriteLine("Ürün başarıyla silindi.");
+                } else 
+                {
+                    Console.WriteLine("Silme işlemi iptal edildi.");
+                }
+            } else 
+            {
+                Console.WriteLine("Belirtilen ID'ye sahip ürün bulunamadı.");
+            }
+        } else 
+        {
+            Console.WriteLine("Geçersiz ID girdiniz. Devam etmek için bir tuşa basın...");
+        }
+
+        Console.WriteLine("Devam etmek için bir tuşa basın...");
         Console.ReadKey();
     }
 }   
