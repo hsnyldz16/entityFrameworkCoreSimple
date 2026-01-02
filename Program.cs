@@ -32,8 +32,7 @@ while (devamEt)
             devamEt = false;
             break;
         default:
-            Console.WriteLine("Geçersiz seçim. Devam etmek için bir tuşa basın...");
-            Console.ReadKey();
+            pressAnyKey();
             break;
     }
 
@@ -78,35 +77,39 @@ while (devamEt)
     }
 
     void UrunMenusu(AppDbContext db)
-    {
-        Console.Clear();
-        Console.WriteLine("-- ÜRÜN İŞLEMLERİ --");
-        Console.WriteLine("1. Listele");
-        Console.WriteLine("2. Ekle");
-        Console.WriteLine("3. Düzenle");
-        Console.WriteLine("4. Sil");
-        Console.WriteLine("0. Geri Dön");
-        Console.Write("Seçiminiz: ");
+    {   
+        bool geriDon = false;
+        while (!geriDon) {
+        
+            Console.Clear();
+            Console.WriteLine("-- ÜRÜN İŞLEMLERİ --");
+            Console.WriteLine("1. Listele");
+            Console.WriteLine("2. Ekle");
+            Console.WriteLine("3. Düzenle");
+            Console.WriteLine("4. Sil");
+            Console.WriteLine("0. Geri Dön");
+            Console.Write("Seçiminiz: ");
 
-        string? secim = Console.ReadLine();
+            string? secim = Console.ReadLine();
 
-        switch (secim)
-        {
-            case "1":
-                UrunListele(db);
-                break;
-            case "2":
-                UrunEkle(db);
-                break;
-            case "3":
-                UrunDuzenle(db);
-                break;
-            case "4":
-                UrunSil(db);
-                break;
-            case "0":
-                // Geri dönme işlemi
-                break;
+            switch (secim)
+            {
+                case "1":
+                    UrunListele(db);
+                    break;
+                case "2":
+                    UrunEkle(db);
+                    break;
+                case "3":
+                    UrunDuzenle(db);
+                    break;
+                case "4":
+                    UrunSil(db);
+                    break;
+                case "0":
+                    // Geri dönme işlemi
+                    break;
+            }
         }
     }
 
@@ -123,13 +126,9 @@ while (devamEt)
             var yeniKategori = new Kategori {Ad = ad, Durum=1};
             db.Kategoriler.Add(yeniKategori);
             db.SaveChanges();
-            Console.WriteLine("Kategori başarıyla eklendi. Devam etmek için bir tuşa basın...");
-        } else 
-        {
-            Console.WriteLine("Kategori adı boş olamaz. Devam etmek için bir tuşa basın...");
         }
 
-        Console.ReadKey();
+        pressAnyKey();
     }
 
     void KategoriListele(AppDbContext db)
@@ -150,13 +149,10 @@ while (devamEt)
             foreach (var kategori in liste)
             {
                 Console.WriteLine("{0,-5} {1, -20}", kategori.Id, kategori.Ad);
-            }
-
-            Console.WriteLine("Devam etmek için bir tuşa basın...");
+            }            
         }
 
-        Console.ReadKey();
-
+        pressAnyKey();
     }
 
     void KategoriDuzenle(AppDbContext db)
@@ -194,8 +190,7 @@ while (devamEt)
             Console.WriteLine("Geçersiz ID girdiniz.");
         }
 
-        Console.WriteLine("Devam etmek için bir tuşa basın...");
-        Console.ReadKey();
+        pressAnyKey();
     }
 
     void KategoriSil(AppDbContext db)
@@ -248,8 +243,7 @@ while (devamEt)
             Console.WriteLine("Geçersiz ID girdiniz."); 
         }
 
-        Console.WriteLine("Devam etmek için bir tuşa basın...");
-        Console.ReadKey();
+        pressAnyKey();
     }
 
     void UrunEkle(AppDbContext db)
@@ -261,8 +255,7 @@ while (devamEt)
         var kategoriler = db.Kategoriler.ToList();
         if(kategoriler.Count == 0)
         {
-            Console.WriteLine("Önce kategori eklemelisiniz. Devam etmek için bir tuşa basın...");
-            Console.ReadKey();
+            pressAnyKey();
             return;
         }
 
@@ -299,6 +292,11 @@ while (devamEt)
         Console.Write("Stok Adedi: ");
         int.TryParse(Console.ReadLine(), out int stok);
 
+        if (stok < 0) {
+            Console.WriteLine("Hata: Stok adedi negatif olamaz!");
+            return;
+        }
+
         if(!string.IsNullOrEmpty(ad))
         {
            var yeniUrun = new Urun
@@ -313,14 +311,13 @@ while (devamEt)
             //Kaydet
             db.Urunler.Add(yeniUrun);
             db.SaveChanges();
-            Console.WriteLine("Ürün başarıyla eklendi. Devam etmek için bir tuşa basın...");
-
+            Console.WriteLine("Ürün başarıyla eklendi.");
         } else 
         {
-            Console.WriteLine("Ürün adı boş olamaz. Devam etmek için bir tuşa basın...");
+            Console.WriteLine("Ürün adı boş olamaz.");
         }
 
-        Console.ReadKey();
+        pressAnyKey();
     }
 
     void UrunListele(AppDbContext db)
@@ -343,11 +340,11 @@ while (devamEt)
             foreach (var u in Urunler)
             { 
                 Console.WriteLine("{0,-5} {1,-20} {2,-10:C2} {3,-8:N0} {4,-15}", 
-                u.Id, u.Ad, u.Fiyat.ToString("N2") + " TL", u.Stok, u.Kategori?.Ad ?? "Yok");            }
-
-            Console.WriteLine("\nDevam etmek için bir tuşa basın...");   
+                u.Id, u.Ad, u.Fiyat.ToString("N2") + " TL", u.Stok, u.Kategori?.Ad ?? "Yok");
+            } 
         }
-        Console.ReadKey();
+
+        pressAnyKey();
     }
 
     void UrunSil(AppDbContext db)
@@ -384,11 +381,10 @@ while (devamEt)
             }
         } else 
         {
-            Console.WriteLine("Geçersiz ID girdiniz. Devam etmek için bir tuşa basın...");
+            Console.WriteLine("Geçersiz ID girdiniz.");
         }
 
-        Console.WriteLine("Devam etmek için bir tuşa basın...");
-        Console.ReadKey();
+        pressAnyKey();
     }
 
     void UrunDuzenle(AppDbContext db)
@@ -408,22 +404,32 @@ while (devamEt)
                 Console.WriteLine($"Mevcut Fiyat: {urun.Fiyat:N2} TL | Mevcut Stok: {urun.Stok:N0}");
                 Console.WriteLine("-----------------------------------------\n");
 
-                //1. Fiyat güncelleme
-                Console.Write("Yeni Fiyat: ");
-                decimal.TryParse(Console.ReadLine(), out decimal yeniFiyat);
-                urun.Fiyat = yeniFiyat;
+                Console.Write("Yeni Fiyat (Boş bırakırsanız değişmez): ");
+                string? fInput = Console.ReadLine();
+                if (!string.IsNullOrEmpty(fInput) && decimal.TryParse(fInput, out decimal yeniFiyat))
+                {
+                    urun.Fiyat = yeniFiyat;
+                }
 
-                //2. Stok güncelleme
-                Console.Write("Yeni Stok: ");
-                int.TryParse(Console.ReadLine(), out int yeniStok);
-                urun.Stok = yeniStok;
+                // Mevcut stok güncelleme yerine:
+                Console.Write("Yeni Stok (Boş bırakırsanız değişmez): ");
+                string? sInput = Console.ReadLine();
+                if (!string.IsNullOrEmpty(sInput) && int.TryParse(sInput, out int yeniStok))
+                {
+                    urun.Stok = yeniStok;
+                }
 
                 db.SaveChanges();
                 Console.WriteLine("Ürün başarıyla güncellendi.");
             }
         }
 
+        pressAnyKey();
+    }
+
+    void pressAnyKey()
+    {
         Console.WriteLine("\nDevam etmek için bir tuşa basın...");
         Console.ReadKey();
-    }   
+    }  
 }   
