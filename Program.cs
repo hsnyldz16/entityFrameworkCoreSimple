@@ -99,7 +99,7 @@ while (devamEt)
                 UrunEkle(db);
                 break;
             case "3":
-                //Urun Düzenleme
+                UrunDuzenle(db);
                 break;
             case "4":
                 UrunSil(db);
@@ -390,4 +390,40 @@ while (devamEt)
         Console.WriteLine("Devam etmek için bir tuşa basın...");
         Console.ReadKey();
     }
+
+    void UrunDuzenle(AppDbContext db)
+    {
+        Console.Clear();
+        Console.WriteLine("-- ÜRÜN DÜZENLEME --");
+        Console.Write("Düzenlemek istediğiniz ürünün ID'sini girin: ");
+
+        if (int.TryParse(Console.ReadLine(), out int urunId))
+        {
+            var urun = db.Urunler.Include(u => u.Kategori).FirstOrDefault(u => u.Id == urunId);
+
+            if(urun != null)
+            {
+                Console.WriteLine("\n-----------------------------------------");
+                Console.WriteLine($"Ürün: {urun.Ad} | Kategori: {urun.Kategori?.Ad}");
+                Console.WriteLine($"Mevcut Fiyat: {urun.Fiyat:N2} TL | Mevcut Stok: {urun.Stok:N0}");
+                Console.WriteLine("-----------------------------------------\n");
+
+                //1. Fiyat güncelleme
+                Console.Write("Yeni Fiyat: ");
+                decimal.TryParse(Console.ReadLine(), out decimal yeniFiyat);
+                urun.Fiyat = yeniFiyat;
+
+                //2. Stok güncelleme
+                Console.Write("Yeni Stok: ");
+                int.TryParse(Console.ReadLine(), out int yeniStok);
+                urun.Stok = yeniStok;
+
+                db.SaveChanges();
+                Console.WriteLine("Ürün başarıyla güncellendi.");
+            }
+        }
+
+        Console.WriteLine("\nDevam etmek için bir tuşa basın...");
+        Console.ReadKey();
+    }   
 }   
